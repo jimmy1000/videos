@@ -1,0 +1,67 @@
+*{
+    margin:0;
+    padding: 0;
+}
+a{
+    text-decoration: none;
+}
+.page-content{
+    max-width: 1500px;
+    margin: 0 auto;
+    font-size: 16px;
+    padding:10px;
+}
+[v-cloak]{
+    display: none;
+}
+.editinput-box .el-input{
+    margin:5px 0;
+}
+header{
+    height: 70px;
+    background: #1e8dff; 
+    display: flex;
+    border-radius: 10px;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+header a{
+    color: #fff;
+    font-size: 18px;
+    width: 100px;
+    text-align: center;
+    display: inline-block;
+    line-height: 70px;
+}
+.h-right span{
+    color: #fff;
+    font-size: 18px;
+    width: 100px;
+    text-align: center;
+    display: inline-block;
+    line-height: 70px;
+}
+.el-form-item{
+    margin-bottom: 0px;
+}
+#search-box {
+    margin: 10px 0;
+}
+
+.next-page {
+    margin: 10px 0;
+}
+
+.next-page a {
+    display: block;
+    background: #409EFF;
+    padding: 15px;
+    text-align: center;
+    color: #fff;
+    border-radius: 5px;
+}
+@media screen and (max-width: 768px) {
+    .el-dialog{
+        width: 95%;
+    }
+}

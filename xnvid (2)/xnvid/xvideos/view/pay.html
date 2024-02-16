@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,
+      initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+    <title>支付</title>
+    <link rel="stylesheet" href="/pay/static/css/ele.css">
+    <link rel="stylesheet" rel="stylesheet" href="/pay/static/css/common.css?v=12234gddffg">
+    <link rel="stylesheet" rel="stylesheet" href="/pay/static/css/vant.css">
+    <link rel="stylesheet" rel="stylesheet" href="/pay/static/css/index.css?v=12234gdfg">
+</head>
+<body>
+    <div id="app" v-cloak class="page-content">
+        <header v-if="isLogin">
+            <div class="h-left">
+                <a href="/">首页</a>
+                <a href="/paytype">通道</a>
+                <a href="/order">订单</a>
+            </div>
+            <div class="h-right">
+                <span>{{userinfo.username}}</span>
+                <span style="cursor:pointer;" @click="loginOut">登出</span>
+            </div>
+        </header>
+        <div class="header-space"></div>
+        <h3>支付通道</h3>
+        <div class="pey-type-list">
+            <el-select v-model="nowCode" @change="chooseSelectType" style="width:280px" placeholder="请选择">
+                <el-option
+                  v-for="item in payTypeSlect"
+                  :key="item.code"
+                  :label="item.code+'-'+item.type"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+
+            <!-- <div class="p-item" v-if="item.isOpen" :class="[{active:nowType.code==item.code},{disabled:!item.isOpen}]"
+                @click="chooseType(item)" v-for="(item,index) in payTypeSlect">
+                {{item.code}} - {{item.type}}
+            </div> -->
+        </div>
+        <h3>当前选择</h3>
+        <div class="now-type">
+            <p>通道：{{nowType.type}}</p>
+            <p v-show="nowType.money">充值金额：{{nowType.money}}</p>
+            <p v-show="nowType.tips">提示：{{nowType.tips}}</p>
+        </div>
+        <h3 v-if="nowType.moneyList.length>0">充值金额</h3>
+        <div v-if="nowType.moneyList.length>0" class="money-select">
+            <div class="m-item" @click="chooseMoney(item)" v-for="(item,index) in nowType.moneyList">{{item}}</div>
+        </div>
+        <h3>自定义金额</h3>
+        <div>
+            <input class="my-val"  type="number" @blur="valChange" @input="valChange" v-model="myMoney">
+            <!-- <el-input-number :min="nowType.minNum" :step="100"  :max="nowType.maxNum" style="width:180px" type="number" @blur="valChange" v-model="myMoney" @change="valChange"></el-input-number> -->
+            <p style="color:red;" v-show="nowType.money">充值金额：{{nowType.money}}</p>
+            <!-- <van-field @update:model-value="valChange" @blur="valChange" v-model="myMoney" type="number" label="" /> -->
+        </div>
+        <div class="nowMoney" v-show="nowMoney" >充值金额为 <b>{{nowMoney}}</b> 元</div>
+        <div class="moneybutton" style="margin:30px 0;">
+            <van-button style="width: 100%;height: 50px;font-size: 18px;" @click="submitPay" type="info"
+                :disabled="!nowMoney">确认充值</van-button>
+        </div>
+        <div class="pay-dilog" v-show="showPayHref">
+            <div class="content">
+                <h1 style="color:red">支付中...</h1>
+                <div class="orderNum btn-copy" :data-clipboard-text="'单号：'+out_order_id" v-show="out_order_id">单号：{{out_order_id}}</div>
+                <p>如浏览器未跳转可手动</p>
+                <canvas id="canvas-qrcode"></canvas>
+                <div class="pay-go-button">
+                    <a :href="payHref" target="_blank">点击跳转支付</a>
+                    <van-button style="width:100%;" @click="showPayHref = false;nowMoney='';myMoney='';" type="primary">支付完成</van-button>
+                    <van-button style="width:100%;margin-top:10px;" @click="showPayHref = false;nowMoney='';myMoney='';" type="warning">关闭</van-button>
+                </div>
+            </div>
+        </div>
+        <div class="pay-dilog" v-show="loadingPay">
+            <div class="loading-f">
+                <van-loading size="84px"></van-loading>
+            </div>
+        </div>
+    </div>
+
+    <script src="/pay/static/js/vue.js"></script>
+    <script src="/pay/static/js/vant.js"></script>
+    <script src="/pay/static/js/ele.js"></script>
+    <script src="/pay/static/js/axios.min.js"></script>
+    <script src="/pay/static/js/qrimgcode.js"></script>
+    <script src="/pay/static/js/clipboard.min.js"></script>
+    <script src="/pay/static/js/index.js?v=1.2.2"></script>
+</body>
+</html>

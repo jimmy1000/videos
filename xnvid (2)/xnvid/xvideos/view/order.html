@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,
+      initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/pay/static/css/ele.css">
+    <link rel="stylesheet" rel="stylesheet" href="/pay/static/css/common.css?v=12234gdasdffg">
+    <link rel="stylesheet" rel="stylesheet" href="/pay/static/css/vant.css">
+</head>
+
+<body>
+    <div id="app" class="page-content">
+        <header v-if="isLogin">
+            <div class="h-left">
+                <a href="/">首页</a>
+                <a href="/paytype">通道</a>
+                <a href="/order">订单</a>
+            </div>
+            <div class="h-right">
+                <span>{{userinfo.username}}</span>
+                <span style="cursor:pointer;" @click="loginOut">登出</span>
+            </div>
+        </header>
+        <div id="search-box">
+            <el-form :inline="true" :model="fromSearchData" class="demo-form-inline">
+                <el-form-item label="状态">
+                    <el-select clearable v-model="fromSearchData.status" placeholder="状态选择">
+                        <el-option label="未支付" :value="-1"></el-option>
+                        <el-option label="成功一" :value="1"></el-option>
+                        <el-option label="成功二" :value="2"></el-option>
+                        <el-option label="失败" :value="0"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="通道">
+                    <el-select clearable v-model="fromSearchData.bank_code" placeholder="通道选择">
+                        <el-option v-for="item in typeSelectTableData" :key="item.code" :label="item.code+'-'+item.type"
+                            :value="item.code">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="单号">
+                    <el-input v-model="fromSearchData.out_order_id" placeholder="单号"></el-input>
+                </el-form-item>
+                <el-form-item label="金额">
+                    <el-input v-model="fromSearchData.money" placeholder="金额"></el-input>
+                </el-form-item>
+                <el-form-item label="">
+                    <el-button @click="getData" type="primary">搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <el-table border :data="tableData" style="width: 100%">
+            <el-table-column type="index" align="center" label="索引" width="80">
+            </el-table-column>
+            <el-table-column prop="bank_code" align="center" label="通道值" width="70">
+            </el-table-column>
+            <el-table-column label="单号" prop="out_order_id" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="money" label="金额" align="center" width="100">
+            </el-table-column>
+            <el-table-column label="下单时间" align="center" width="160">
+                <template slot-scope="scope">
+                    {{formateDate(scope.row.createdAt)}}
+                </template>
+            </el-table-column>
+            <el-table-column label="更新时间" align="center" width="160">
+                <template slot-scope="scope">
+                    {{formateDate(scope.row.updatedAt)}}
+                </template>
+            </el-table-column>
+            <el-table-column label="签名" prop="sign" show-overflow-tooltip></el-table-column>
+            <el-table-column align="center" label="状态" width="100">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-if="scope.row.status==-1" type="warning">未支付</el-button>
+                    <el-button size="mini" v-if="scope.row.status==1||scope.row.status==2" type="success">支付成功
+                    </el-button>
+                    <el-button size="mini" v-if="scope.row.status==0" type="danger">支付失败</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column fixed="right" align="center" label="操作" width="100">
+                <template slot-scope="scope">
+                    <el-button @click="handleClickEdit(scope.row)" type="text" size="small">查看</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div class="next-page" v-if="count>50&&showNextPage">
+            <a href="javascript:void(0)" @click="moreOrder">更多</a>
+        </div>
+        <div style="font-size:14px;padding:10px;text-align:center;">
+            共计 {{count}} 单
+        </div>
+
+        <el-dialog title="编辑" :visible.sync="dialogVisibleEdit" width="600" :before-close="handleCloseEdit">
+            <div class="editinput-box">
+                <el-form ref="editItemData" :model="editItemData" label-width="100px">
+                    <el-form-item label="单号">
+                        <el-input v-model="editItemData.out_order_id"></el-input>
+                    </el-form-item>
+                    <el-form-item label="名称">
+                        <el-input v-model="editItemData.bank_code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额">
+                        <el-input v-model="editItemData.money"></el-input>
+                    </el-form-item>
+                    <el-form-item label="创建时间">
+                        <el-input v-model="editItemData.createdAt" type="textarea" :row="3"></el-input>
+                    </el-form-item>
+                    <el-form-item label="更新时间">
+                        <el-input v-model="editItemData.updatedAt"></el-input>
+                    </el-form-item>
+                    <el-form-item label="状态">
+                        <el-input v-model="editItemData.status"></el-input>
+                    </el-form-item>
+                    <el-form-item label="回调API">
+                        <el-input v-model="editItemData.notify_url"></el-input>
+                    </el-form-item>
+                    <el-form-item label="回调API">
+                        <el-input v-model="editItemData.sign"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleEdit = false">取 消</el-button>
+                <el-button type="primary" :loading="isUpdateLoading" @click="dialogVisibleEdit = false">确 定</el-button>
+            </div>
+        </el-dialog>
+
+    </div>
+    <script src="/pay/static/js/axios.min.js"></script>
+    <script src="/pay/static/js/request.js"></script>
+    <script src="/pay/static/js/vue.js"></script>
+    <script src="/pay/static/js/ele.js"></script>
+    <script src="/pay/static/js/vant.js"></script>
+    <script src="/pay/static/js/moment.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                dialogVisibleEdit: false,
+                tableData: [],
+                showNextPage: true,
+                addMoneyNum: '',
+                fromSearchData: {
+                    status: '',
+                    bank_code: '',
+                    out_order_id: '',
+                    money: '',
+                },
+                editItemData: {},
+                isUpdateLoading: false,
+                userinfo: {},
+                isLogin: false,
+                count: 0,
+                typeSelectTableData: []
+            },
+            mounted() {
+                this.getData();
+                let userinfo = localStorage.getItem('userinfo')
+                let token = localStorage.getItem('token')
+                if (userinfo) {
+                    userinfo = JSON.parse(userinfo)
+                    this.isLogin = true
+                }
+                this.userinfo = userinfo;
+                request({
+                    url: '/api/pay/payTypeList'
+                }).then(res => {
+                    this.typeSelectTableData = res
+                })
+            },
+            methods: {
+                formateDate(val) {
+                    if (val) {
+                        val = new Date(val)
+                        return moment(val).format('YYYY-MM-DD HH:mm:ss');
+                    }
+                },
+                loginOut() {
+                    localStorage.clear();
+                    window.location.reload();
+                    window.location.href = "/"
+                },
+                moreOrder() {
+                    if (this.count > 10) {
+                        let len = this.tableData.length - 1
+                        if (len) {
+                            this.fromSearchData.offset = this.tableData[len]['_id']
+                        }
+                    }
+                    this.getData();
+                },
+                getData() {
+                    let options = {}
+                    for (let key in this.fromSearchData) {
+                        if (this.fromSearchData[key]) {
+                            options[key] = this.fromSearchData[key]
+                        }
+                    }
+                    request({
+                        url: '/api/pay/orderList',
+                        data: options
+                    }).then(res => {
+                        console.log(res)
+                        res.data.forEach((item) => {
+                            this.tableData.push(item)
+                        })
+                        if (!res.data || res.data.length < 50) {
+                            this.showNextPage = false
+                        }
+                        this.count = res.count
+                    })
+                },
+                handleClickEdit(item) {
+                    this.dialogVisibleEdit = true;
+                    this.editItemData = { ...item };
+                },
+                handleCloseEdit() {
+                    this.dialogVisibleEdit = false
+                },
+            }
+        })
+
+    </script>
+</body>
+
+</html>

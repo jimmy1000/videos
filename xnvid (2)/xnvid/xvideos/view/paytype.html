@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,
+      initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/pay/static/css/ele.css">
+    <link rel="stylesheet" rel="stylesheet" href="/pay/static/css/common.css?v=12234asdfgdfg">
+    <link rel="stylesheet" rel="stylesheet" href="/pay/static/css/vant.css">
+</head>
+
+<body>
+    <div id="app" class="page-content">
+        <header v-if="isLogin">
+            <div class="h-left">
+                <a href="/">首页</a>
+                <a href="/paytype">通道</a>
+                <a href="/order">订单</a>
+            </div>
+            <div class="h-right">
+                <span>{{userinfo.username}}</span>
+                <span style="cursor:pointer;" @click="loginOut">登出</span>
+            </div>
+        </header>
+        <div id="search-box">
+            <el-form :inline="true" :model="fromSearchData" class="demo-form-inline">
+                <el-form-item label="状态">
+                    <el-select clearable v-model="fromSearchData.isOpen" placeholder="状态选择">
+                        <el-option label="开启" :value="true"></el-option>
+                        <el-option label="关闭" :value="false"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="getData" type="primary">搜索</el-button>
+                    <el-button @click="dialogVisibleCreat=true" type="warning">添加</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <el-table border :data="tableData" style="width: 100%">
+            <el-table-column prop="code" align="center" label="值" width="70">
+            </el-table-column>
+            <el-table-column prop="rate" align="center" label="费率" width="70">
+            </el-table-column>
+            <el-table-column prop="type" label="名称" width="180">
+            </el-table-column>
+            <el-table-column prop="name" align="center" label="状态" width="100">
+                <template slot-scope="scope">
+                    <el-tag size="mini" type="success" v-if="scope.row.isOpen">开启</el-tag>
+                    <el-tag size="mini" type="info" v-else>未开启</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column label="金额区间(元)" align="center">
+                <template slot-scope="scope">
+                    {{scope.row.minNum}} - {{scope.row.maxNum}}(元)
+                </template>
+            </el-table-column>
+            <el-table-column label="金额列表" align="center">
+                <template slot-scope="scope">
+                    {{scope.row.moneyList.join(',')}}
+                </template>
+            </el-table-column>
+            <el-table-column label="成功率" prop="status" show-overflow-tooltip></el-table-column>
+            <el-table-column label="提示" prop="tips" show-overflow-tooltip></el-table-column>
+            <el-table-column label="金额" prop="money" show-overflow-tooltip></el-table-column>
+            <el-table-column fixed="right" align="center" label="操作" width="150">
+                <template slot-scope="scope">
+                    <el-button @click="handleClickEdit(scope.row)" type="text" size="small">查看</el-button>
+                    <el-button type="text" @click="handleClickEdit(scope.row)" size="small">编辑</el-button>
+                    <el-button type="text" @click="" size="small">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+
+        <el-dialog title="编辑" :visible.sync="dialogVisibleEdit" width="600" :before-close="handleCloseEdit">
+            <div class="editinput-box">
+                <el-form ref="editItemData" :model="editItemData" label-width="100px">
+                    <el-form-item label="值">
+                        <el-input v-model="editItemData.code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="费率">
+                        <el-input v-model="editItemData.rate"></el-input>
+                    </el-form-item>
+                    <el-form-item label="是否开启">
+                        <el-switch v-model="editItemData.isOpen"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="名称">
+                        <el-input v-model="editItemData.type"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额描述">
+                        <el-input v-model="editItemData.money"></el-input>
+                    </el-form-item>
+                    <el-form-item label="提示">
+                        <el-input v-model="editItemData.tips" type="textarea" :row="3"></el-input>
+                    </el-form-item>
+                    <el-form-item label="规则">
+                        <el-input v-model="editItemData.rule"></el-input>
+                    </el-form-item>
+                    <el-form-item label="成功率">
+                        <el-input v-model="editItemData.status"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额区间">
+                        <el-input style="width:120px" v-model="editItemData.minNum" type="number"></el-input>
+                        -
+                        <el-input style="width:120px" v-model="editItemData.maxNum" type="number"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额列表">
+                        <el-tag v-for="(tag,index) in editItemData.moneyList" :key="tag" closable
+                            @close="removeMoneyList(index)" :type="tag">
+                            {{tag}}
+                        </el-tag>
+                        <el-input style="width:120px" v-model="addMoneyNum"></el-input>
+                        <el-button type="primary" @click="addMoneyFn">添加</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleEdit = false">取 消</el-button>
+                <el-button type="primary" :loading="isUpdateLoading" @click="dialogVisibleEditSave">确 定</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="添加" :visible.sync="dialogVisibleCreat" width="600" :before-close="handleCloseCreate">
+            <div class="editinput-box">
+                <el-form ref="createDateFrom" :model="createDateFrom" label-width="100px">
+                    <el-form-item label="值">
+                        <el-input v-model="createDateFrom.code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="费率">
+                        <el-input v-model="createDateFrom.rate"></el-input>
+                    </el-form-item>
+                    <el-form-item label="是否开启">
+                        <el-switch v-model="createDateFrom.isOpen"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="名称">
+                        <el-input v-model="createDateFrom.type"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额描述">
+                        <el-input v-model="createDateFrom.money"></el-input>
+                    </el-form-item>
+                    <el-form-item label="提示">
+                        <el-input v-model="createDateFrom.tips" type="textarea" :row="3"></el-input>
+                    </el-form-item>
+                    <el-form-item label="规则">
+                        <el-input v-model="createDateFrom.rule"></el-input>
+                    </el-form-item>
+                    <el-form-item label="成功率">
+                        <el-input v-model="createDateFrom.status"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额区间">
+                        <el-input style="width:120px" v-model="createDateFrom.minNum" type="number"></el-input>
+                        -
+                        <el-input style="width:120px" v-model="createDateFrom.maxNum" type="number"></el-input>
+                    </el-form-item>
+                    <el-form-item label="金额列表">
+                        <el-tag v-for="(tag,index) in createDateFrom.moneyList" :key="tag" closable
+                            @close="removeMoneyList(index)" :type="tag">
+                            {{tag}}
+                        </el-tag>
+                        <el-input style="width:120px" v-model="addMoneyTypeNum"></el-input>
+                        <el-button type="primary" @click="addMoneyTypeFn">添加</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisibleEdit = false">取 消</el-button>
+                <el-button type="primary" :loading="isCreateLoading" @click="createPayType">确 定</el-button>
+            </div>
+        </el-dialog>
+
+
+    </div>
+    <script src="/pay/static/js/axios.min.js"></script>
+    <script src="/pay/static/js/request.js"></script>
+    <script src="/pay/static/js/vue.js"></script>
+    <script src="/pay/static/js/ele.js"></script>
+    <script src="/pay/static/js/vant.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                dialogVisibleEdit: false,
+                tableData: [],
+                addMoneyNum: '',
+                addMoneyTypeNum: '',
+                fromSearchData:{
+                    isOpen:null
+                },
+                editItemData: {},
+                dialogVisibleCreat: false,
+                isUpdateLoading: false,
+                isCreateLoading: false,
+                userinfo: {},
+                isLogin: false,
+                createDateFrom: {
+                    type: '',rate:'', code: '', isOpen: true, money: '', rule: '', status: '', maxNum: 50000, minNum: 0, moneyList: []
+                }
+            },
+            mounted() {
+                this.getData();
+                let userinfo = localStorage.getItem('userinfo')
+                let token = localStorage.getItem('token')
+                if (userinfo) {
+                    userinfo = JSON.parse(userinfo)
+                    this.isLogin = true
+                }
+                this.userinfo = userinfo;
+            },
+            methods: {
+                loginOut() {
+                    localStorage.clear();
+                    window.location.reload();
+                    window.location.href = "/"
+                },
+                handleCloseCreate(){
+                    this.dialogVisibleCreat = false
+                },
+                createPayType() {
+                    if (!this.createDateFrom.code || !this.createDateFrom.type) return this.$message.error('参数错误！')
+                    this.isCreateLoading = true;
+                    request({
+                        url: '/api/addPaytype',
+                        data: this.createDateFrom
+                    }).then(res => {
+                        this.isCreateLoading = false;
+                        this.$message.success('创建成功！')
+                        this.dialogVisibleCreat = false;
+                        this.getData();
+                    }).catch((res) => {
+                        this.isCreateLoading = false;
+                    })
+                },
+                getData() {
+                    let options = {}
+                    if(this.fromSearchData.isOpen!==null&&this.fromSearchData.isOpen!==''){
+                        options.isOpen = this.fromSearchData.isOpen
+                    }
+                    request({
+                        url: '/api/pay/payTypeList',
+                        data:options
+                    }).then(res => {
+                        this.tableData = res
+                    })
+                },
+                removeMoneyList(index) {
+                    this.editItemData.moneyList.splice(index, 1)
+                },
+                addMoneyFn() {
+                    if (this.addMoneyNum) {
+                        if (this.editItemData.moneyList.includes(this.addMoneyNum)) return alert('已存在！')
+                        this.editItemData.moneyList.push(this.addMoneyNum)
+                        this.addMoneyNum = ''
+                    }
+                },
+                addMoneyTypeFn() {
+                    if (this.addMoneyTypeNum) {
+                        if (this.createDateFrom.moneyList.includes(this.addMoneyTypeNum)) return alert('已存在！')
+                        this.createDateFrom.moneyList.push(this.addMoneyTypeNum)
+                        this.addMoneyTypeNum = ''
+                    }
+                },
+                removeMoneyTypeList(index) {
+                    this.createDateFrom.moneyList.splice(index, 1)
+                },
+                handleClickEdit(item) {
+                    this.dialogVisibleEdit = true;
+                    this.editItemData = { ...item };
+                },
+                handleCloseEdit() {
+                    this.dialogVisibleEdit = false
+                },
+                dialogVisibleEditSave() {
+                    let _id = this.editItemData._id
+                    delete this.editItemData._id
+                    this.isUpdateLoading = true;
+                    request({
+                        url: '/api/pay/updatePayType',
+                        data: {
+                            _id,
+                            updates: this.editItemData
+                        }
+                    }).then((res) => {
+                        this.isUpdateLoading = false;
+                        this.dialogVisibleEdit = false;
+                        this.$message.success('编辑成功！')
+                        this.getData();
+                    }).finaly(() => {
+                        this.isUpdateLoading = false;
+                    })
+                }
+            }
+        })
+
+    </script>
+</body>
+
+</html>

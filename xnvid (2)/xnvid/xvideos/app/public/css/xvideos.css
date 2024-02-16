@@ -1,0 +1,129 @@
+.main-uploader,
+.videoad-title.videoad-title-invideo,
+.related-content__btns,
+#video-tabs,
+#ad-footer2,
+.report-search,
+#header-menu-toggle,
+#v-actions-container,
+#ad-footer2,
+.search-premium-tabs,
+#tabComments_bottom_page,
+.remove-ads,
+#ad-footer,
+.thumb-nat-ad,.simple-dropdown.search-filters,
+#header-mobile-right,#search-associates strong,#dafanliebiao,#mobile-header-links{
+    display: none !important;
+}
+#head__top__container{
+    width: 100%;
+}
+#ADV-dom-map-in {
+    text-align: center;
+    padding: 10px 5px;
+}
+
+#ADV-dom-map-in img {
+    display: block;
+    max-width: 100%;
+}
+
+#ADV-dom-map-in .img-adv {
+    margin: 5px;
+}
+
+#ADV-dom-map-in .img-adv a {}
+
+#ADV-info-connect {
+    font-size: 12px;
+    padding: 5px;
+    text-align: center;
+}
+
+#ADV-dom-map-in .app-adv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#ADV-dom-map-in .app-adv a {
+    font-size: 14px;
+    width: 70px;
+    display: inline-block;
+    text-align: center;
+}
+
+#ADV-dom-map-in .app-adv a img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    margin: 0 auto;
+    display: block;
+
+}
+
+#ADV-dom-map-in .app-adv a span {
+    padding: 5px;
+    display: block;
+}
+
+#ADV-dom-map-in .text-adv a {
+    padding: 5px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+#ADV-dom-map-in .text-adv {
+    text-align: left;
+    font-size: 18px;
+}
+#footer h2{
+    text-align: left;
+}
+.app-friendlink {
+    text-align: left;
+}
+
+.app-friendlink a {
+    font-size: 14px;
+    display: inline-block;
+    padding: 0 8px;
+}
+#reloadP {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    width: 60px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 20px;
+    text-decoration: underline;
+    color: #000000;
+    background: #fff;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 2px;
+}
+#header #logo {
+    position: absolute;
+    left: 10px;
+    top: 12px;
+    width: 60px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 20px;
+    text-decoration: underline;
+}
+#video-tips {
+    text-align:center;
+    padding-bottom:5px;
+    color:red;
+    font-size:13px;
+}
+@media screen and (max-width: 768px) {
+    .body--search .search-page {
+        padding-top: 40px;
+    }
+}
