@@ -16,19 +16,19 @@ return `
 `
 }
 var appAdvList = [
-  {name:'大神直播',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://yysg018.com/imgs/chaochui.gif'},
-  {name:'麻豆传媒',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://yysg018.com/imgs/xhf.gif'},
-  {name:'茄子直播',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://yysg018.com/imgs/x8.webp'},
-  {name:'黄瓜在线',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://yysg018.com/imgs/cc1.gif'},
-  {name:'91香蕉',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://yysg018.com/imgs/hsxs.gif'}
+  {name:'大神直播',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://xnnn.org/images/friend/0/598.webp?1708172616'},
+  {name:'麻豆传媒',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://xnnn.org/images/friend/0/598.webp?1708172616'},
+  {name:'茄子直播',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://xnnn.org/images/friend/0/598.webp?1708172616'},
+  {name:'黄瓜在线',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://xnnn.org/images/friend/0/598.webp?1708172616'},
+  {name:'91香蕉',url:'https://appxzawesdfasdccc.sebobaovideo.com',image:'https://xnnn.org/images/friend/0/598.webp?1708172616'}
 ]   
 var friendLinkList = [
     {name:'国产XNXX',url:'http://videos.cnxnxx.com'},
     {name:'哈密瓜导航',url:'https://hmgdh.com'},
 ]
 var imgAdvList = [
-    // {name:'大神直播',url:'https://371275.com',image:'http://404.nanfandianzi.com/img/3/a1.gif'},
-    // {name:'大神直播',url:'https://8.rjxj.org',image:'https://404.nanfandianzi.com/img/3/banner2.gif'},
+     {name:'大神直播',url:'https://371275.com',image:'https://xnnn.org/images/friend/0/598.webp?1708172616'},
+     {name:'大神直播',url:'https://8.rjxj.org',image:'https://xnnn.org/images/friend/0/598.webp?1708172616'},
 ]
 var textAdvList = [
   {name:'国产',url:'/?k=国产'},
@@ -69,11 +69,11 @@ friendLinkList.forEach(item=>{
 var ALLDOMINPAGE = ADVDOMINFN(imgAdvListText,appAdvListText,textAdvListText);
 var ALLFRIENDLINK = FRIENDLIKDOM(friendLinkListText)
 window.onload = function () {
-  $('#header header').append(ALLDOMINPAGE)
+  $('#main').prepend(ALLDOMINPAGE)
   $('.thumb-ad').remove();
   $('.premium-results-line').remove();
   $('#footer').append(ALLFRIENDLINK);
-  $('#footer').append(ALLDOMINPAGE);
+  // $('#footer').append(ALLDOMINPAGE);
   $('#related-videos .show-more').text('加载更多');
   $('#search-associates').addClass('mobile-expanded');
   const commonDom = `<div id="reloadP" onclick="refresh();window.location.reload();">刷新</div>`

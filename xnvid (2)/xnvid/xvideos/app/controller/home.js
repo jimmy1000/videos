@@ -24,7 +24,7 @@ const INDEXDOM = function (title, key, desc, body = 'd') {
   </head>
   <body>
   <div id="content">${body}</div>
-  <script src="./js/m/tzxvideos.js?v=${dateNow}"></script>
+  <script src="./js/xvideos.js?v=${dateNow}"></script>
   </body>
   </html>
   `
@@ -116,7 +116,7 @@ class HomeController extends Controller {
         
         if(isJSONObject(res)){
           console.log(res)
-          return ctx.body=res
+          this.ctx.body =res
         }else{
           console.log('end1')
         bodyHtml = ''
@@ -140,14 +140,14 @@ class HomeController extends Controller {
         })
         $endBodyHtml("title").html(title + TDKItem.title);
         $endBodyHtml('head').append(`<meta name="description" content="${description}${TDKItem.title}">`)
-        $endBodyHtml('head').append(`<link rel="stylesheet" type="text/css" href="./js/tzxvideos.css?v=${dateNow}">`)
-        $endBodyHtml('head').append(`<script src="./js/tzxvideos.js?v=${dateNow}"></script>`)
+        $endBodyHtml('head').append(`<link rel="stylesheet" type="text/css" href="./css/xvideos.css?v=${dateNow}">`)
+        $endBodyHtml('head').append(`<script src="./js/xvideos.js?v=${dateNow}"></script>`)
         $endBodyHtml('#mobile-slogan').remove();
         $endBodyHtml('#tabComments_bottom_page').remove();
         $endBodyHtml('.exo-ad-ins-div').remove();
         $endBodyHtml(".remove-ads").remove();
         $endBodyHtml('#ad-footer').remove();
-        $endBodyHtml('body').append(`<script src="./js/m/tzxvideos.js?v=${dateNow}"></script>`)
+        $endBodyHtml('body').append(`<script src="./js/xvideos.js?v=${dateNow}"></script>`)
         bodyHtml = $endBodyHtml('html') + ''
       }
       }
@@ -212,13 +212,14 @@ class HomeController extends Controller {
 
         $endBodyHtml('head').append(`<meta name="description" content="${TDKItem.description}">`)
         $endBodyHtml('head').append(`<meta name="keywords" content="${TDKItem.keywords}">`)
-        $endBodyHtml('head').append(`<link rel="stylesheet" type="text/css" href="./js/tzxvideos.css?v=${dateNow}">`)
+        $endBodyHtml('head').append(`<link rel="stylesheet" type="text/css" href="./css/xvideos.css?v=${dateNow}">`)
         $endBodyHtml('#header .topbar').append(commonDom)
         $endBodyHtml('.logo-xnxx a').empty()
         $endBodyHtml('.exo-ad-ins-div').remove();
         $endBodyHtml(".remove-ads").remove();
         $endBodyHtml('#ad-footer').remove();
-        $endBodyHtml('body').append(`<script src="./js/tzxvideos.js?v=${dateNow}"></script>`)
+        $endBodyHtml('#main').append(`<script src="./js/xvideos.js?v=${dateNow}"></script>`)
+        
         bodyHtml = $endBodyHtml('html') + ''
         
       }).catch((e) => {
@@ -227,15 +228,15 @@ class HomeController extends Controller {
     // 处理html
 
     // 缓存html
-    if (bodyHtml.length&&bodyHtml.length>1000&&this.ctx.request.url=='/') {
-      if (!isHaveHtml) {
-        fs.writeFile(cacheFile + 'index.html', bodyHtml, null, function (err) {
-          if (err) {
-            console.log(err);
-          }
-        });
-      }
-    }
+    // if (bodyHtml.length&&bodyHtml.length>1000&&this.ctx.request.url=='/') {
+    //   if (!isHaveHtml) {
+    //     fs.writeFile(cacheFile + 'index.html', bodyHtml, null, function (err) {
+    //       if (err) {
+    //         console.log(err);
+    //       }
+    //     });
+    //   }
+    // }
     this.ctx.body = bodyHtml
   }
 }
